@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Budget Page</h1>
+<button id="addBudgetBtn">Add New Budget</button>
+
+<br>
+
+
+<!-- Budget Table -->
+<table id="vendorTable">
+    <thead>
+        <tr>
+            <th>Budget Year</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for budget in budgets %}
+        <tr>
+            <td><a href="{{ url_for('main.budget', year=budget.year) }}">{{ budget.year }}</a></td>
+            <td>{{budget.status}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Modal Structure -->
+<div id="budgetModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add New Budget</h2>
+        <form id="vendorForm" method="post" action="{{ url_for('main.add_budget') }}" method="POST"> 
+            <div class="form-group">
+                <label for="year">Budget Year</label>
+                <input type="text" id="year" name="year" required>
+            </div>
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" name="status" required>
+                    <option value="approved">Approved</option>
+                    <option value="wip">Work In Progress</option>
+                </select>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    const btn = document.getElementById("addBudgetBtn");
+    const modal = document.getElementById("budgetModal");
+    const span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function () {
+        modal.style.display = "block";
+    };
+
+    span.onclick = function () {
+        modal.style.display = "none";
+    };
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
+
+</script>
+
+{% endblock %}
+
+{% set body_class = 'budgets-page' %}

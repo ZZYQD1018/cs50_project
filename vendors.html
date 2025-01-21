@@ -1,0 +1,54 @@
+<!-- your_project/templates/vendors.html -->
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Our Vendors</h1>
+
+<form method="POST" action="{{ url_for('main.add_vendor') }}">
+    <input type="text" name="vendor_name" placeholder="Enter vendor name" required>
+    <button type="submit" class="btn btn-primary">Add New Vendor</button>
+</form>
+
+<!-- Vendor Table -->
+<table id="vendorTable">
+    <thead>
+        <tr>
+            <th>Vendor Name</th>
+            <th>Vendor ID</th>
+            <th>Action</th> <!-- New Action Column -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for vendor in vendors %}
+        <tr>
+            <td><a href="{{ url_for('main.vendor', vendor_id=vendor.id) }}">{{ vendor.name }}</a></td>
+            <td>{{ vendor.id }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('main.delete_vendor', vendor_id=vendor.id) }}" onsubmit="return confirmDelete();">
+                    <button type="submit">Delete</button>
+                </form>
+
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+<!-- Popup Notification -->
+<div id="popup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background-color: #FFA500; color: #1D2D71; padding: 15px; z-index: 1000; border-radius: 5px; text-align: center;">
+    <span id="popup-message"></span>
+</div>
+
+<!-- JavaScript for Popup -->
+<script>
+    // Function to confirm deletion
+    function confirmDelete() {
+        return confirm("Can you confirm deletion?"); // Show confirmation dialog
+    }
+</script>
+
+{% endblock %}
+
+{% set body_class = 'vendors-page' %}

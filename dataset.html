@@ -1,0 +1,773 @@
+<!-- your_project/templates/dataset.html -->
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h1 style="display: inline;">{{ dataset.name }}</h1> 
+<h3 style="display: inline; margin-left: 20px;"> Back to <a href="{{ url_for('main.vendor', vendor_id=vendor.id) }}" style="color: white;">{{ vendor.name }}</a></h3> 
+
+<br>
+<br>
+
+<br>
+
+<br>
+
+<!-- Central Bar -->
+<div class="tab-bar">
+    <div class="tab {{ 'active' if active_tab == 'dataset-intro' else '' }}" onclick="showContent('dataset-intro')">Dataset Introduction</div>
+    <div class="tab {{ 'active' if active_tab == 'documentations' else '' }}" onclick="showContent('documentations')">Documentations</div>
+    <div class="tab {{ 'active' if active_tab == 'invoices' else '' }}" onclick="showContent('invoices')">Invoices</div>
+    <div class="tab {{ 'active' if active_tab == 'contracts' else '' }}" onclick="showContent('contracts')">Contracts</div>
+    <div class="tab {{ 'active' if active_tab == 'events' else '' }}" onclick="showContent('events')">Events</div>
+</div>
+
+
+<div id="dataset-intro" class="tab-content {{ 'active' if active_tab == 'dataset-intro' else '' }}">
+
+    <div class="top-section" class="tab-content {{ 'active' if active_tab == 'dataset-intro' else '' }}">
+        <div class="title-buttons-wrapper"  class="tab-content {{ 'active' if active_tab == 'dataset-intro' else '' }}">
+            <h2>Dataset Introduction</h2>
+            <button id="edit-btn" onclick="enableEdit()">Edit</button>
+            <button id="save-btn" onclick="saveContent()" style="display:none;">Save</button>
+        </div>
+        <div id="content" contenteditable="false">
+            {{ dataset.introduction }}
+        </div>
+    </div>
+
+    <div class="bottom-section"  class="tab-content {{ 'active' if active_tab == 'dataset-intro' else '' }}">
+        <div class="title-buttons-wrapper"  class="tab-content {{ 'active' if active_tab == 'dataset-intro' else '' }}">
+            <h2>Dataset Tags</h2>
+            <button id="addDatasetTagButton" class="open-modal-button">Edit</button>
+        </div>
+        <br>
+        <br>
+        <div id="content" contenteditable="false">
+            {% for tag in dataset.tags %}
+                <span class="tag">{{ tag.name }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+<div id="documentations" class="tab-content {{ 'active' if active_tab == 'documentations' else '' }}">
+    <h2 style="display: inline;">Documentations</h2>
+    <button id="addDocButton"  class="open-modal-button">Add New Documentations</button>
+
+    <table id='datasetTable'>
+        <thead>
+            <tr>
+                <th>File Type</th>
+                <th>File</th>
+                <th>Link</th>
+                <th>Comments</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doc in documentations %}
+                <tr>
+                    <td>{{ doc.filetype }}</td>
+                    <td>
+                        {% if doc.filename %}
+                          <a href="{{ url_for('static', filename='uploads/documentations/' + dataset.id|string + '/' + doc.filename) }}" target="_blank">{{ doc.filename }}</a>
+                        {% else %}
+                          None
+                        {% endif %}
+                      </td>
+                    <td>
+                        <a href="http://{{ doc.filelink }}" target="_blank">{{ doc.filelink }}</a>
+                    </td>
+                    <td>{{ doc.comments }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('main.delete_documentation', doc_id=doc.id, dataset_id = dataset.id) }}" onsubmit="return confirmDelete();">
+                            <button type="submit">Delete</button>
+                        </form>
+
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+<div id="invoices" class="tab-content {{ 'active' if active_tab == 'invoices' else '' }}">
+    <h2>Invoices</h2>
+
+    <button id="addInvoiceButton"  class="open-modal-button">Add New Invoice</button>
+
+    <!-- Flash Message Display -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div id="flash-message">
+                {% for category, message in messages %}
+                    <p class="alert alert-{{ category }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Invoice Table -->
+    <table id='datasetTable'>
+        <thead>
+            <tr>
+                <th>File</th>
+                <th>Invoice Upload Date</th>
+                <th>Invoice Period Start Date</th>
+                <th>Invoice Period End Date</th>
+                <th>Invoice Frequency</th>
+                <th>Invoice Frequency Unit</th>
+                <th>Invoice Amount</th>
+                <th>Invoice Currency</th>
+                <th>Budgeted Invoice ID</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+                <tr>
+                    <td><a href="{{ url_for('static', filename='uploads/invoices/' +  dataset.id|string + '/' + invoice.filename) }}" target="_blank">{{ invoice.filename }}</a></td>
+                    <td>{{ invoice.invoice_date }}</td>
+                    <td>{{ invoice.invoice_period_start_date }}</td>
+                    <td>{{ invoice.invoice_period_end_date }}</td>
+                    <td>{{ invoice.frequency }}</td>
+                    <td>{{ invoice.frequency_unit }}</td>
+                    <td>{{ invoice.currency }}</td>
+                    <td>{{ invoice.amount }}</td>
+                    <td>{{ invoice.budgeted_invoice_id }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('main.delete_invoice', invoice_id=invoice.id, dataset_id = dataset.id) }}" onsubmit="return confirmDelete();">
+                            <button type="submit">Delete</button>
+                        </form>
+
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    
+</div>
+
+<div id="contracts" class="tab-content {{ 'active' if active_tab == 'contracts' else '' }}">
+    <h2>Contracts</h2>
+
+    <button id="addContractButton"  class="open-modal-button">Add New Contract</button>
+
+    <!-- Flash Message Display -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div id="flash-message">
+                {% for category, message in messages %}
+                    <p class="alert alert-{{ category }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Invoice Table -->
+    <table id='datasetTable'>
+        <thead>
+            <tr>
+                <th>File</th>
+                <th>Contract Signing Date</th>
+                <th>Contract Commence Date</th>
+                <th>Renewal Frequency</th>
+                <th>Renewal Frequency Unit</th>
+                <th>Renewal Notice Day Count</th>
+                <th>Renewal Notice Day Type</th>
+                <th>Is Active Contract</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contract in contracts %}
+                <tr>
+                    <td><a href="{{ url_for('static', filename='uploads/contracts/' +  dataset.id|string + '/' + contract.filename) }}" target="_blank">{{ contract.filename }}</a></td>
+                    <td>{{ contract.contract_signing_date}}</td>
+                    <td>{{ contract.contract_commence_date}}</td>
+                    <td>{{ contract.renewal_frequency}}</td>
+                    <td>{{ contract.renewal_frequency_unit}}</td>
+                    <td>{{ contract.renewal_notice_day_count}}</td>
+                    <td>{{ contract.renewal_notice_day_type}}</td>
+                    <td>
+                        <button
+                            class="status-btn"
+                            onclick="setContractStatus('{{ dataset.id }}', 'True')"
+                            style="background-color: {% if contract.is_active%}green{% else %}lightgray{% endif %};"
+                        >
+                            True
+                        </button>
+                        <button
+                            class="status-btn"
+                            onclick="setContractStatus('{{ dataset.id }}', 'False')"
+                            style="background-color: {% if not contract.is_active %}red{% else %}lightgray{% endif %};"
+                        >
+                            False
+                        </button>
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('main.delete_contract', contract_id=contract.id, dataset_id = dataset.id) }}" onsubmit="return confirmDelete();">
+                            <button type="submit">Delete</button>
+                        </form>
+
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+</div>
+
+<div id="events" class="tab-content {{ 'active' if active_tab == 'events' else '' }}">
+    <h2>Events</h2>
+    <button id="addEventButton"  class="open-modal-button">Add New Event</button>
+    <!-- Flash Message Display -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div id="flash-message">
+                {% for category, message in messages %}
+                    <p class="alert alert-{{ category }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Invoice Table -->
+    <table id='datasetTable'>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Summary</th>
+                <th>File</th>
+                <th>Link</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+                <tr>
+                    <td>{{ event.event_date}}</td>
+                    <td>{{ event.comments}}</td>
+                    <td>
+                        {% if event.filename %}
+                          <a href="{{ url_for('static', filename='uploads/events/' + dataset.id|string + '/' + event.filename) }}" target="_blank">{{ event.filename }}</a>
+                        {% else %}
+                          None
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="http://{{ event.eventlink }}" target="_blank">{{ event.eventlink }}</a>
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('main.delete_event', event_id=event.id, dataset_id = dataset.id) }}" onsubmit="return confirmDelete();">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+</div>
+
+<!-- Add Dataset Tag Table -->
+<div id="tagSelectionModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2  style="display: inline">Select Tags</h2>
+            <span class="modal-close" id="closeTagModal"  style="display: inline; margin-left: 20px; float: right;">×</span>
+        </div>
+        <div class="tags-container" id="tags-container">
+            <!-- Tags will be rendered here -->
+        </div>
+        <br>
+        <button id="save-button">Save Selected Tags</button>
+    </div>
+</div>
+
+<!-- Add Invoice Table -->
+<div id = 'invoiceModal'  class="modal">
+    <div class = "modal-content">
+        <span class="close">&times;</span>
+        <h2>Add New Invoice</h2>
+        <form action="{{ url_for('main.add_invoice',dataset_id=dataset.id) }}" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="invoice_file"  style="display: inline">Choose file</label>
+                <input type="file" id="invoice_file" name="invoice_file" required  style="display: inline; margin-left: 20px;">
+            </div>
+            <div class="form-group">
+                <label for="invoice_date"   style="display: inline">Invoice update date</label>
+                <input type="date" id="invoice_date" name="invoice_date" required>
+            </div>
+            <div class="form-group">
+                <label for="invoice_date"   style="display: inline">Invoice coverage start date</label>
+                <input type="date" id="invoice_period_start_date" name="invoice_period_start_date" required  style="display: inline; margin-left: 20px;">
+            </div>
+            <div class="form-group">
+                <label for="invoice_date"   style="display: inline">Invoice coverage end date</label>
+                <input type="date" id="invoice_period_end_date" name="invoice_period_end_date" required  style="display: inline; margin-left: 20px;">
+            </div>
+            <div class="form-group">
+                <label for="invoice_date"   style="display: inline">Invoice frequency</label>
+                <input type="number" id="frequency" name="frequency" required  style="display: inline; margin-left: 20px;">
+            </div>
+            <div class="form-group">
+                <label for="invoice_date"   style="display: inline">Invoice frequency unit</label>
+                <label for="frequency_unit"  style="display: inline; margin-left: 20px;">Choose a frequency unit:</label>
+                    <select id="frequency_unit" name="frequency_unit">
+                        <option value="W">W</option>
+                        <option value="M">M</option>
+                        <option value="Q">Q</option>
+                        <option value="Q">Y</option>
+                    </select>
+            </div>
+            <div class="form-group">
+                <label for="invoice_date"   style="display: inline">Invoice amount</label>
+                <input type="number" id="amount" name="amount" required  style="display: inline; margin-left: 20px;">
+            </div>
+            <div class="form-group">
+                <label for="currency"  style="display: inline">Choose a currency:</label>
+                    <select id="currency" name="currency">
+                        <option value="USD">USD</option>
+                        <option value="GBP">GBP</option>
+                        <option value="CNY">CNY</option>
+                    </select></td>
+            </div>
+
+
+            <div class="form-group">
+                <label for="invoice_date"   style="display: inline">Link Budget</label>
+                <div style="text-align: center;">
+                    <label for="filter-year">Filter by Year:</label>
+                    <select id="filter-year" name="budgeted_year">
+                        <option value="">-- Select Year --</option>
+                    </select>
+                </div>
+                <div style="text-align: center;">
+                    <label for="filter-vendor">Filter by Vendor:</label>
+                    <select id="filter-vendor" name="budgeted_vendor" disabled>
+                        <option value="">-- Select Vendor --</option>
+                    </select>
+                </div>
+                <div style="text-align: center;">
+                    <label for="filter-dataset">Filter by Dataset:</label>
+                    <select id="filter-dataset" name="budgeted_dataset" disabled>
+                        <option value="">-- Select Dataset --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Add Invoice Table -->
+<div id = 'contractModal'  class="modal">
+    <div class = "modal-content">
+        <span class="close">&times;</span>
+        <h2>Add New Invoice</h2>
+        <form action="{{ url_for('main.add_contract',dataset_id=dataset.id) }}" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="contract_file"  style="display: inline">Choose file</label>
+                <input type="file" id="contract_file" name="contract_file" required  style="display: inline; margin-left: 20px;">
+            </div>
+            <div class="form-group">
+                <label for="contract_signing_date"   style="display: inline">Contract Signing Date</label>
+                <input type="date" id="contract_signing_date" name="contract_signing_date" required>
+            </div>
+            <div class="form-group">
+                <label for="contract_commence_date"   style="display: inline">Contract Commence Date</label>
+                <input type="date" id="contract_commence_date" name="contract_commence_date" required>
+            </div>
+            <div class="form-group">
+                <label for="renewal_frequency"   style="display: inline">Renewal Frequency</label>
+                <input type="number" id="renewal_frequency" name="renewal_frequency" required>
+            </div>
+            <div>
+                <label for="renewal_frequency_unit"   style="display: inline">Renewal Frequency Unit</label>
+                <select id="renewal_frequency_unit" name="renewal_frequency_unit" required>
+                    <option value="M">Month</option>
+                    <option value="Q">Quarter</option>
+                    <option value="Y">Year</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="renewal_notice_day_count"   style="display: inline">Renewal Notice Day Count</label>
+                <input type="number" id="renewal_notice_day_count" name="renewal_notice_day_count" required>
+            </div>
+            <div>
+                <label for="renewal_notice_day_type"   style="display: inline">Renewal Notice Day Type</label>
+                <select id="renewal_notice_day_type" name="renewal_notice_day_type" required>
+                    <option value="B">Business Day</option>
+                    <option value="D">Natural Day</option>
+                </select>
+            </div>
+            <div>
+                <label for="is_active"   style="display: inline">Is Active Contract?</label>
+                <select id="is_active" name="is_active" required>
+                    <option value="True">Yes</option>
+                    <option value="False">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add Documentation Table -->
+<div id = 'docModal'  class="modal">
+    <div class = "modal-content">
+        <span class="close">&times;</span>
+        <h2>Add New Documentation</h2>
+        <form action="{{ url_for('main.add_docuentation',dataset_id=dataset.id) }}" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file_type"  style="display: inline">Choose a File Type:</label>
+                    <select id="file_type" name="file_type">
+                        <option value="User Guide">User Guide</option>
+                        <option value="Technical Guide">Technical Guide</option>
+                        <option value="Others">Others</option>
+                    </select></td>
+            </div>
+            <div class="form-group">
+                <label for="doc_file"  style="display: inline">Choose file</label>
+                <input type="file" id="doc_file" name="doc_file" style="display: inline; margin-left: 20px;">
+            </div>
+            <div class="form-group">
+                <label for="file_link"  style="display: inline">Add a Link</label>
+                <input id="file_link" name="file_link">
+            </div>
+            <div class="form-group">
+                <label for="comments"  style="display: inline">Comments</label>
+                <input id="comments" name="comments">
+            </div>
+            <div class="form-group">
+                <button type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Add Documentation Table -->
+<div id = 'eventModal'  class="modal">
+    <div class = "modal-content">
+        <span class="close">&times;</span>
+        <h2>Add New Event</h2>
+        <form action="{{ url_for('main.add_event',dataset_id=dataset.id) }}" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="event_date"   style="display: inline">Event Date</label>
+                <input type="date" id="event_date" name="event_date" required  style="display: inline; margin-left: 20px;">
+            </div>
+            <div class="form-group">
+                <label for="comments"  style="display: inline">Comments</label>
+                <input id="comments" name="comments">
+            </div>
+            <div class="form-group">
+                <label for="event_file"  style="display: inline">Choose file</label>
+                <input type="file" id="event_file" name="event_file" style="display: inline; margin-left: 20px;">
+            </div>
+            <div class="form-group">
+                <label for="event_link"  style="display: inline">Add a Link</label>
+                <input id="event_link" name="event_link">
+            </div>
+            <div class="form-group">
+                <button type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    const filterYearDropdown = document.getElementById('filter-year');
+    const filterVendorDropdown = document.getElementById('filter-vendor');
+    const filterDatasetDropdown = document.getElementById('filter-dataset');
+    const selectedIdInput = document.getElementById('selected-id');
+
+    // Fetch all years and populate the dropdown
+    const fetchYears = () => {
+        fetch('/api/budgeted-years')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    filterYearDropdown.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Error fetching years:', err));
+    };
+
+    // Fetch vendors for the selected year
+    const fetchVendors = (year) => {
+        if (!year) {
+            filterVendorDropdown.disabled = true;
+            filterVendorDropdown.innerHTML = '<option value="">-- Select Vendor --</option>';
+            return;
+        }
+
+        fetch(`/api/budgeted-vendors/${year}`)
+            .then(response => response.json())
+            .then(data => {
+                filterVendorDropdown.disabled = false;
+                filterVendorDropdown.innerHTML = '<option value="">-- Select Vendor --</option>';
+                data.forEach(vendor => {
+                    const option = document.createElement('option');
+                    option.value = vendor;
+                    option.textContent = vendor;
+                    filterVendorDropdown.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Error fetching vendors:', err));
+    };
+
+    // Fetch datasets for the selected year and vendor
+    const fetchDatasets = (year, vendor) => {
+        if (!year || !vendor) {
+            filterDatasetDropdown.disabled = true;
+            filterDatasetDropdown.innerHTML = '<option value="">-- Select Dataset --</option>';
+            return;
+        }
+
+        fetch(`/api/budgeted-datasets?year=${year}&vendor=${vendor}`)
+            .then(response => response.json())
+            .then(data => {
+                filterDatasetDropdown.disabled = false;
+                filterDatasetDropdown.innerHTML = '<option value="">-- Select Dataset --</option>';
+                data.forEach(dataset => {
+                    const option = document.createElement('option');
+                    option.value = dataset;
+                    option.textContent = dataset;
+                    filterDatasetDropdown.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Error fetching datasets:', err));
+    };
+
+    // Event listeners for cascading dropdowns
+    filterYearDropdown.addEventListener('change', () => {
+        const year = filterYearDropdown.value;
+        fetchVendors(year);
+        fetchDatasets(null, null); // Clear datasets if year changes
+    });
+
+    filterVendorDropdown.addEventListener('change', () => {
+        const year = filterYearDropdown.value;
+        const vendor = filterVendorDropdown.value;
+        fetchDatasets(year, vendor);
+    });
+
+    filterDatasetDropdown.addEventListener('change', () => {
+        selectedIdInput.value = filterDatasetDropdown.value;
+    });
+
+    // Initial fetch for years
+    fetchYears();
+
+    function showContent(contentId) {
+        // Remove 'active' class from all tabs
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+
+        // Add 'active' class to the clicked tab
+        const clickedTab = document.querySelector(`.tab[onclick="showContent('${contentId}')"]`);
+        if (clickedTab) {
+            clickedTab.classList.add('active');
+        }
+
+        // Hide all tab content
+        const contents = document.querySelectorAll('.tab-content');
+        contents.forEach(content => content.classList.remove('active'));
+
+        // Show the content for the active tab
+        const activeContent = document.getElementById(contentId);
+        if (activeContent) {
+            activeContent.classList.add('active');
+        }
+    }
+
+
+    // Function to enable editing
+    function enableEdit() {
+            document.getElementById("content").contentEditable = true;  // Make content editable
+            document.getElementById("content").style.border = "1px solid #ccc";  // Add a border to show it's editable
+            document.getElementById("edit-btn").style.display = "none";  // Hide edit button
+            document.getElementById("save-btn").style.display = "inline-block";  // Show save button
+        }
+
+        // Function to save content (using AJAX)
+        function saveContent() {
+            const content = document.getElementById("content").innerHTML;  // Get the editable content
+
+            // Send content to the server using Fetch API
+            fetch('/dataset/{{dataset.id}}/save_introduction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: content })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Content saved successfully!');
+                    document.getElementById("content").contentEditable = false;  // Disable editing
+                    document.getElementById("content").style.border = "none";  // Remove border
+                    document.getElementById("save-btn").style.display = "none";  // Hide save button
+                    document.getElementById("edit-btn").style.display = "inline-block";  // Show edit button
+                } else {
+                    alert('Error saving content!');
+                }
+            });
+        }
+    // Select all buttons that open modals
+    const openButtons = document.querySelectorAll('.open-modal-button');
+
+    // Select all modals
+    const modals = document.querySelectorAll('.modal');
+
+    // Attach click event to each button
+    openButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const btnModalMapping = {
+                'addDocButton':'docModal',
+                'addInvoiceButton':'invoiceModal',
+                'addContractButton':'contractModal',
+                'addEventButton':'eventModal',
+                'addDatasetTagButton':'datasetTagModal'
+            }
+            const targetModalId = btnModalMapping[button.id];
+            const modal = document.getElementById(targetModalId);
+            modal.style.display = 'block';
+        });
+    });
+
+    // Attach close event to each close button inside modals
+    modals.forEach(modal => {
+        const closeButton = modal.querySelector('.close');
+        closeButton.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+    });
+
+    // Close modal if clicking outside of the modal content
+    window.addEventListener('click', function(event) {
+        modals.forEach(modal => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+
+    function setContractStatus(contractId, status) {
+        fetch(`/set_contract_status/${contractId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: status })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Optionally refresh or update the UI to reflect the change
+                location.reload();
+            } else {
+                alert("Failed to update status");
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    // add tags
+    const allTags = {{ tags|tojson }}; // Pass tags from Flask
+    const datasetTags = {{ dataset_tags|tojson }}; // Pass dataset tags from Flask
+    const selectedTags = new Set();
+
+    const tagsContainer = document.getElementById('tags-container');
+    const saveButton = document.getElementById('save-button');
+    const addDatasetTagButton = document.getElementById('addDatasetTagButton');
+    const tagSelectionModal = document.getElementById('tagSelectionModal');
+    const closeTagModal = document.getElementById('closeTagModal');
+
+    // Function to render tags
+    function renderTags() {
+        tagsContainer.innerHTML = '';
+        allTags.forEach(tag => {
+            const tagElement = document.createElement('div');
+            tagElement.classList.add('tag');
+            tagElement.textContent = tag;
+
+            if (selectedTags.has(tag)) {
+                tagElement.classList.add('selected');
+                const closeBtn = document.createElement('div');
+                closeBtn.classList.add('close');
+                closeBtn.textContent = '×';
+                closeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectedTags.delete(tag);
+                    renderTags();
+                });
+                tagElement.appendChild(closeBtn);
+            }
+
+            tagElement.addEventListener('click', () => {
+                if (selectedTags.has(tag)) {
+                    selectedTags.delete(tag);
+                } else {
+                    selectedTags.add(tag);
+                }
+                renderTags();
+            });
+
+            tagsContainer.appendChild(tagElement);
+        });
+    }
+
+    // Show modal when button is clicked
+    addDatasetTagButton.addEventListener('click', () => {
+        tagSelectionModal.style.display = 'flex';
+        renderTags(); // Ensure tags are rendered when the modal opens
+    });
+
+    // Close modal when close button is clicked
+    closeTagModal.addEventListener('click', () => {
+        tagSelectionModal.style.display = 'none';
+        window.location.href = `/dataset/{{dataset.id}}`; // Redirect to the dataset page
+    });
+
+    // Save selected tags
+    saveButton.addEventListener('click', () => {
+        const selectedTagsArray = Array.from(selectedTags);
+        fetch('/save-tags/{{dataset.id}}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ selected_tags: selectedTagsArray }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            tagSelectionModal.style.display = 'none'; // Close modal after saving
+        });
+        window.location.href = `/dataset/{{dataset.id}}`; // Redirect to the dataset page
+    });
+</script>
+
+
+{% endblock %}
+
+{% set body_class = 'dataset-page' %}

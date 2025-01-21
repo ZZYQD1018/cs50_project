@@ -1,0 +1,207 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 style="padding-right: 20px; text-align: left; ">List of Project Codes </h1>
+<p style="padding-right: 50px; text-align: left;">Not sure how to define these but Rebeca should know better!</p>
+<button style="float:left;"  id="addProCodeBtn"  class="open-modal-button">Add New Project Code</button>
+
+<br>
+<table id="datasetTable">
+    <thead>
+        <tr>
+            <th>Project Code</th>
+            <th>Definition<br>                   
+        </tr>
+    </thead>
+    <tbody>
+        {% for code in project_codes %}
+        <tr>
+            <td>{{ code.code }}</td>
+            <td>{{ code.definition }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br>
+<br>
+<br>
+<br>
+
+<h1 style=" text-align: right;">List of User Groups </h1>
+<p style="text-align: right;">Who are using the data!</p>
+<button style=" float:right;"  id="addUserGroupBtn"  class="open-modal-button">Add New User Group Code</button>
+
+<br>
+<br>
+<table id="datasetTable">
+    <thead>
+        <tr>
+            <th>Group Name</th>
+            <th>Definition<br>                   
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in user_groups %}
+        <tr>
+            <td>{{ user.group_name }}</td>
+            <td>{{ user.definition }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h1 style="padding-right: 20px; text-align: left; ">List of Dataset Tags</h1>
+<p style="padding-right: 50px; text-align: left;">Tags that could be attached to datasets</p>
+<button style="float:left;"  id="addDatasetTagBtn"  class="open-modal-button">Add New Tag</button>
+
+<br>
+<br>
+<br>
+<br>
+
+<table id="datasetTable">
+    <thead>
+        <tr>
+            <th>Tag</th>
+            <th>Definition<br>                   
+        </tr>
+    </thead>
+    <tbody>
+        {% for tag in dataset_tags %}
+        <tr>
+            <td>{{ tag.name }}</td>
+            <td>{{ tag.definition }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Add Project Code Table -->
+<div id = 'proCodeModal'  class="modal">
+    <div class = "modal-content">
+        <span class="close">&times;</span>
+        <h2>Add New Project Code</h2>
+        <form action="{{ url_for('main.add_project_code') }}" method="POST">
+            <div class="form-group">
+                <label for="project_code"   style="display: inline">Project Code</label>
+                <input id="project_code" name="project_code" required>
+            </div>
+            <div class="form-group">
+                <label for="definition"   style="display: inline">Definition</label>
+                <input id="definition" name="definition" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add User Group Table -->
+<div id = 'userGroupModal'  class="modal">
+    <div class = "modal-content">
+        <span class="close">&times;</span>
+        <h2>Add New User Group</h2>
+        <form action="{{ url_for('main.add_user_group') }}" method="POST">
+            <div class="form-group">
+                <label for="user_group"   style="display: inline">User Group</label>
+                <input id="user_group" name="user_group" required>
+            </div>
+            <div class="form-group">
+                <label for="definition"   style="display: inline">Definition</label>
+                <input id="definition" name="definition" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add Dataset Tag Table -->
+<div id = 'datasetTagModal'  class="modal">
+    <div class = "modal-content">
+        <span class="close">&times;</span>
+        <h2>Add New Dataset Tag</h2>
+        <form action="{{ url_for('main.add_new_dataset_tag') }}" method="POST">
+            <div class="form-group">
+                <label for="tag_name"   style="display: inline">New Tag Name</label>
+                <input id="tag_name" name="tag_name" required>
+            </div>
+            <div class="form-group">
+                <label for="definition"   style="display: inline">Definition</label>
+                <input id="definition" name="definition" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+
+    // Select all buttons that open modals
+    const openButtons = document.querySelectorAll('.open-modal-button');
+
+    // Select all modals
+    const modals = document.querySelectorAll('.modal');
+
+    // Map button IDs to their corresponding modal IDs
+    const buttonToModalMap = {
+        addProCodeBtn: 'proCodeModal',
+        addUserGroupBtn: 'userGroupModal',
+        addDatasetTagBtn: 'datasetTagModal', // Add more mappings as needed
+        // Add more button-modal mappings here
+    };
+
+    // Attach click event to each button
+    openButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetModalId = buttonToModalMap[button.id]; // Get the modal ID from the map
+            if (targetModalId) {
+                const modal = document.getElementById(targetModalId);
+                if (modal) {
+                    modal.style.display = 'block'; // Show the modal
+                } else {
+                    console.error(`Modal with ID "${targetModalId}" not found.`);
+                }
+            } else {
+                console.error(`Button ID "${button.id}" does not have a corresponding modal.`);
+            }
+        });
+    });
+
+    // Attach click event to each button
+    // openButtons.forEach(button => {
+    //     button.addEventListener('click', function() {
+    //         const targetModalId = button.id === 'addProCodeBtn' ? 'proCodeModal' : 'userGroupModal';
+    //         const modal = document.getElementById(targetModalId);
+    //         modal.style.display = 'block';
+    //     });
+    // });
+
+    // Attach close event to each close button inside modals
+    modals.forEach(modal => {
+        const closeButton = modal.querySelector('.close');
+        closeButton.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+    });
+
+    // Close modal if clicking outside of the modal content
+    window.addEventListener('click', function(event) {
+        modals.forEach(modal => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+
+</script>
+
+{% endblock %}
+
+{% set body_class = 'admins-page' %}
+

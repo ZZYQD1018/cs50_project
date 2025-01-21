@@ -1,0 +1,303 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>{{year}} Budget Page</h1>
+<br>
+<div style="display: flex; gap: 20px; align-items: center;">
+    <form method="POST" action="{{ url_for('main.smart_fill_in_budget', year=year) }}">
+        <button style="display: inline;">Smart Fill In</button>
+    </form>
+
+    <button id="addNewBudgetedItemBtn" style="display: inline;">Add New Budgeted Item</button>
+
+    <a href="/budget_analysis/{{year}}">
+        <button type="submit" style="display: inline;">Go to Budget Analysis</button>
+    </a>
+</div>
+
+<table id="vendorTable">
+    <thead>
+        <tr>
+            <th>Budgeted Item Id</th>
+
+            <th>Vendor</th>
+            <th>Dataset</th>
+
+            <th>Last Invoice Frequency</th>
+            <th>Last Invoice Frequency Unit</th>
+            <th>Last Invoice Currency</th> 
+            <th>Last Invoice Amount</th> 
+
+            <th>Budgeted Invoice Frequency</th>
+            <th>Budgeted Invoice Frequency Unit</th>
+            <th>Budgeted Invoice Currency</th> 
+            <th>Budgeted Invoice Amount</th>
+
+            <th>Action</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in budgets %}
+        <tr data-id={{ item.id }}>
+            <td >{{ item.id }}</td>
+            <td>{{ item.budgeted_vendor }}</td>
+            <td>{{ item.budgeted_dataset }}</td>
+
+            <td>{{ item.last_invoice_frequency }}</td>
+            <td>{{ item.last_invoice_frequency_unit }}</td>
+            <td>{{ item.last_invoice_currency }}</td>
+            <td>{{ item.last_invoice_amount }}</td>
+
+            <td class="editable" data-column="budgeted_invoice_frequency">{{ item.budgeted_invoice_frequency }}</td>
+            <td class="editable" data-column="budgeted_invoice_frequency_unit">{{ item.budgeted_invoice_frequency_unit }}</td>
+            <td class="editable" data-column="budgeted_invoice_currency">{{ item.budgeted_invoice_currency }}</td>
+            <td class="editable" data-column="budgeted_invoice_amount">{{ item.budgeted_invoice_amount }}</td>
+
+            <td>
+                <button class="edit-btn">Set Budget</button>
+                <br>
+                <form method="POST" action="{{ url_for('main.delete_budgeted_item', item_id=item.id, year = item.budgeted_year) }}" onsubmit="return confirmDelete();">
+                    <button type="submit">Delete Record</button>
+                </form>
+            </td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Modal Structure -->
+<div id="budgetModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add New Budget</h2>
+        <form id="vendorForm" method="post" action="{{ url_for('main.add_indi_budget') }}" method="POST"> 
+            <div class="form-group">
+                <label for="year">Budget Year</label>
+                <input type="float" id="year" name="year" required>
+            </div>
+            <div class="form-group">
+                <label for="budgeted_vendor">Vendor</label>
+                <select id="budgeted_vendor" name="budgeted_vendor">
+                    <option value="">-- Select Vendor --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="budgeted_dataset">Dataset</label>
+                <select id="budgeted_dataset" name="budgeted_dataset">
+                    <option value="">-- Select Dataset --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="last_invoice_frequency">Last Invoice Frequency</label>
+                <input id="last_invoice_frequency" name="last_invoice_frequency" type="float" >
+            </div>
+            <div class="form-group">
+                <label for="last_invoice_frequency_unit">Last Invoice Frequency Unit</label>
+                <select id="last_invoice_frequency_unit" name="last_invoice_frequency_unit" >
+                    <option value="None">None</option>
+                    <option value="W">W</option>
+                    <option value="M">M</option>
+                    <option value="Q">Q</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="last_invoice_currency">Last Invoice Currency</label>
+                <select id="last_invoice_currency" name="last_invoice_currency" >
+                    <option value="None">None</option>
+                    <option value="USD">USD</option>
+                    <option value="GBP">GBP</option>
+                    <option value="CNY">CNY</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="last_invoice_amount">Last Invoice Amount</label>
+                <input id="last_invoice_amount" name="last_invoice_amount" type="float">
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const filterVendorDropdown = document.getElementById('budgeted_vendor');
+    const filterDatasetDropdown = document.getElementById('budgeted_dataset');
+
+    // Fetch vendors for the selected year
+    const fetchVendors = function () {
+        fetch(`/api/fetch-all-vendors`)
+            .then(response => response.json())
+            .then(data => {
+                filterVendorDropdown.disabled = false;
+                filterVendorDropdown.innerHTML = '<option value="">-- Select Vendor --</option>';
+                data.forEach(vendor => {
+                    const option = document.createElement('option');
+                    option.value = vendor;
+                    option.textContent = vendor;
+                    filterVendorDropdown.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Error fetching vendors:', err));
+    };
+
+     // Fetch datasets for the selected year and vendor
+     const fetchDatasets = (vendor) => {
+        if (!vendor) {
+            filterDatasetDropdown.disabled = true;
+            filterDatasetDropdown.innerHTML = '<option value="">-- Select Dataset --</option>';
+            return;
+        }
+
+        fetch(`/api/fetch-all-vendors-for-a-vendor/${vendor}`)
+            .then(response => response.json())
+            .then(data => {
+                filterDatasetDropdown.disabled = false;
+                filterDatasetDropdown.innerHTML = '<option value="">-- Select Dataset --</option>';
+                data.forEach(dataset => {
+                    const option = document.createElement('option');
+                    option.value = dataset;
+                    option.textContent = dataset;
+                    filterDatasetDropdown.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Error fetching datasets:', err));
+    };
+
+    filterVendorDropdown.addEventListener('change', () => {
+        const vendor = filterVendorDropdown.value;
+        fetchDatasets(vendor);
+    });
+
+    filterDatasetDropdown.addEventListener('change', () => {
+        selectedIdInput.value = filterDatasetDropdown.value;
+    });
+
+    // Initial fetch for years
+    fetchVendors();
+
+
+    // // Fetch datasets for the selected year and vendor
+    // const fetchDatasets = (year, vendor) => {
+    //     if (!year || !vendor) {
+    //         filterDatasetDropdown.disabled = true;
+    //         filterDatasetDropdown.innerHTML = '<option value="">-- Select Dataset --</option>';
+    //         return;
+    //     }
+
+    //     fetch(`/api/budgeted-datasets?year=${year}&vendor=${vendor}`)
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             filterDatasetDropdown.disabled = false;
+    //             filterDatasetDropdown.innerHTML = '<option value="">-- Select Dataset --</option>';
+    //             data.forEach(dataset => {
+    //                 const option = document.createElement('option');
+    //                 option.value = dataset;
+    //                 option.textContent = dataset;
+    //                 filterDatasetDropdown.appendChild(option);
+    //             });
+    //         })
+    //         .catch(err => console.error('Error fetching datasets:', err));
+    // };
+
+
+    const btn = document.getElementById("addNewBudgetedItemBtn");
+    const modal = document.getElementById("budgetModal");
+    const span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function () {
+        modal.style.display = "block";
+    };
+
+    span.onclick = function () {
+        modal.style.display = "none";
+    };
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
+
+    // Function to confirm deletion
+    function confirmDelete() {
+        return confirm("Can you confirm deletion?"); // Show confirmation dialog
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Add event listener to all "Set" buttons
+        const buttons = document.querySelectorAll(".edit-btn");
+
+        buttons.forEach(button => {
+            button.addEventListener("click", function () {
+                const row = this.closest("tr"); // Get the row of the clicked button
+                const item_id = row.dataset.id; // Extract the row's unique id
+                const cells = row.querySelectorAll(".editable"); // Get all editable cells in the row
+
+                if (this.textContent === "Set Budget") {
+                    // Change cells to input fields
+                    cells.forEach(cell => {
+                        const currentValue = cell.textContent.trim();
+                        const input = document.createElement("input");
+                        input.type = "text";
+                        input.value = currentValue;
+                        cell.innerHTML = ""; // Clear the cell
+                        cell.appendChild(input); // Add the input field
+                    });
+
+                    // Change button to "Save Budget"
+                    this.textContent = "Save Budget";
+                    this.classList.add("save-btn");
+                    this.classList.remove("edit-btn");
+                } else if (this.textContent === "Save Budget") {
+                    // Save the input values back to the cell
+                    const updatedData = {'item_id': item_id};
+
+                    cells.forEach(cell => {
+                        const input = cell.querySelector("input");
+                        if (input) {
+                            updatedData[cell.dataset.column] = input.value.trim();
+                            cell.textContent = input.value.trim(); // Update displayed value
+                        }
+                    });
+
+                    // cells.forEach(cell => {
+                    //     const input = cell.querySelector("input");
+                    //     if (input) {
+                    //         const newValue = input.value.trim();
+                    //         updatedData[cell.dataset.column] = newValue; // Collect the updated data
+                    //         cell.textContent = newValue; // Replace input with updated value
+                    //     }
+                    // });
+                    // console.log("Sending data to server:", updatedData);
+
+                    // Send the updated data to the server
+                    fetch("/budget/set_budget", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(updatedData)
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log("Data updated successfully:", updatedData);
+                            } else {
+                                console.error("Error updating data:", data.error);
+                            }
+                        });
+
+                    // Change button back to "Set"
+                    this.textContent = "Set Budget";
+                    this.classList.add("edit-btn");
+                    this.classList.remove("save-btn");
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}
+
+{% set body_class = 'budget-page' %}

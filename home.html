@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 style="padding-right: 20px; text-align: right;">Today is {{ today }} </h1>
+<p style="padding-right: 50px; text-align: right;">I hope today is a bright day for whoever uses this webpage:)</p>
+
+
+<br>
+<br>
+<form method="get" action="{{ url_for('main.home') }}"></form>
+    <table id="datasetTable">
+        <thead>
+            <tr>
+                <th>Dataset Name</th>
+                <th>Vendor Name</th>
+                <th>Next Renewal Date (Indicative)</th>
+                <th>Renewal Notice Deadline (Indicative)</th>
+                <th>Renewal Notice Countdowns</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in contracts %}
+            <tr>
+                <td>{{ item.dataset.name }}</td>
+                <td>{{ item.vendor.name }}</td>
+                <td>{{ item.next_renewal_date }}</td>
+                <td>{{ item.renewal_notice_date }}</td>
+                <td>{{ item.renewal_notice_countdown }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
+{% endblock %}
+
+{% set body_class = 'home-page' %}
+

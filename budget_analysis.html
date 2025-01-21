@@ -1,0 +1,121 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Budgeted Items for Year {{ year }}</h1>
+
+
+<button id="showRatesBtn"  class="open-modal-button">Show Exchange Rate</button>
+
+<!-- Add Invoice Table -->
+<div id = 'contractModal'  class="modal">
+    <div class = "modal-content">
+        <span class="close">&times;</span>
+
+        <h2>{{year}} Exchange Rate</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Currency</th>
+                    <th>Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rate in rates %}
+                    <!-- Budgeted Amount row spans the number of actual amounts -->
+                    <tr>
+                        <td>{{ rate.currency }}</td>
+                        <td>{{ rate.rate}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Add Exchange Rate</h2>
+        <form action="{{ url_for('main.add_rate',year=year) }}" method="POST">
+            <div class="form-group">
+                <label for="currency"  style="display: inline">Currency</label>
+                <input id="currency" name="currency" required  style="display: inline; margin-left: 20px;">
+            </div>
+            <div class="form-group">
+                <label for="rate"   style="display: inline">Rate</label>
+                <input type="number" id="rate" name="rate" required  style="display: inline; margin-left: 20px;">
+            </div>
+            <div class="form-group">
+                <button type="submit">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<table  id="vendorTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Vendor</th>
+            <th>Dataset</th>
+            <th>Budgeted Amount</th>
+            <th>Actual Amount</th>
+            <th>File</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for id, data in budget_info_table.items() %}
+            <!-- Budgeted Amount row spans the number of actual amounts -->
+            <tr>
+                <td rowspan="{{ data.actual_amounts|length }}">{{ id }}</td>
+                <td rowspan="{{ data.actual_amounts|length }}">{{ data.budgeted_vendor }}</td>
+                <td rowspan="{{ data.actual_amounts|length }}">{{ data.budgeted_dataset }}</td>
+                <td rowspan="{{ data.actual_amounts|length }}">{{ data.budgeted_amount }}</td>
+                <td>{{ data.actual_amounts[0] }}</td>
+                <td>{{ data.file_list[0] }}</td>
+            </tr>
+            <!-- Display remaining actual amounts -->
+            {% for i in range(1, data.actual_amounts|length) %}
+            <tr>
+                <td>{{ data.actual_amounts[i] }}</td>
+                <td>{{ data.file_list[i] }}</a></td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<script>
+
+    // Select all buttons that open modals
+    const openButtons = document.querySelectorAll('.open-modal-button');
+
+    // Select all modals
+    const modals = document.querySelectorAll('.modal');
+
+    // Attach click event to each button
+    openButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetModalId = 'contractModal' ;
+            const modal = document.getElementById(targetModalId);
+            modal.style.display = 'block';
+        });
+    });
+
+    // Attach close event to each close button inside modals
+    modals.forEach(modal => {
+        const closeButton = modal.querySelector('.close');
+        closeButton.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+    });
+
+    // Close modal if clicking outside of the modal content
+    window.addEventListener('click', function(event) {
+        modals.forEach(modal => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+
+</script>
+{% endblock %}
+
+{% set body_class = 'budgets-analysis-page' %}

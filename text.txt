@@ -1,0 +1,19 @@
+<form>
+            <div class="form-group">
+                <label for="sales-manager">Sales Manager</label>
+                <input type="text" id="sales-manager" name="sales-manager" placeholder="Enter Sales Manager Name">
+            </div>
+            <div class="form-group">
+                <label for="support">Support</label>
+                <input type="text" id="support" name="support" placeholder="Enter Support Info">
+            </div>
+            <div class="form-group">
+                <label for="contact-number">Contact Number</label>
+                <input type="text" id="contact-number" name="contact-number" placeholder="Enter Contact Number">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter Email Address">
+            </div>
+            <button type="submit">Submit</button>
+        </form>

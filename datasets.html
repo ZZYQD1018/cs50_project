@@ -1,0 +1,117 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Dataset Page</h1>
+
+<br>
+
+<div class="container">
+    <!-- Left section: Tags -->
+    <div class="left">
+        <h3>Tags</h3>
+        <ul id="tag-list">
+            {% for tag in tags %}
+            <li class="tag-item" data-tag="{{ tag }}">{{ tag }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Right section: Datasets -->
+    <div class="right">
+        <div id="dataset-table-container">
+            <table id="dataset-table">
+                <colgroup>
+                    <col style="width: 30%;"> <!-- First column -->
+                    <col style="width: 35%;"> <!-- Second column -->
+                    <col style="width: 35%;"> <!-- Third column -->
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>Dataset</th>
+                        <th>Vendor</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="dataset-table-body">
+                    <!-- Rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tagList = document.getElementById('tag-list');
+        const datasetList = document.getElementById('dataset-list');
+        const selectedTags = new Set();
+
+        // Function to render datasets
+        function renderDatasets(datasets) {
+            const tableBody = document.getElementById('dataset-table-body');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            datasets.forEach(dataset => {
+                const row = document.createElement('tr');
+
+                // Dataset Name (as a link)
+                const nameCell = document.createElement('td');
+                const link = document.createElement('a');
+                link.href = `/dataset/${dataset.id}`; // Link to the dataset detail page
+                link.textContent = dataset.name;
+                link.classList.add('dataset-link'); // Add a class for optional styling
+                nameCell.appendChild(link);
+                row.appendChild(nameCell);
+
+                // Vendor
+                const vendorCell = document.createElement('td');
+                vendorCell.textContent = dataset.vendor || 'N/A'; // Handle missing vendor info
+                row.appendChild(vendorCell);
+
+                // Status
+                const statusCell = document.createElement('td');
+                statusCell.textContent = dataset.status || 'Unknown'; // Handle missing status info
+                row.appendChild(statusCell);
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to fetch and render datasets based on selected tags
+        function fetchDatasets() {
+            const query = [...selectedTags].map(tag => `tag=${encodeURIComponent(tag)}`).join('&');
+            const url = `/filter_datasets?${query}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(renderDatasets)
+                .catch(err => console.error('Error fetching datasets:', err));
+        }
+
+        // Handle tag click
+        tagList.addEventListener('click', (e) => {
+            if (e.target && e.target.classList.contains('tag-item')) {
+                const tag = e.target.getAttribute('data-tag');
+
+                // Toggle tag selection
+                if (selectedTags.has(tag)) {
+                    selectedTags.delete(tag);
+                    e.target.classList.remove('selected');
+                } else {
+                    selectedTags.add(tag);
+                    e.target.classList.add('selected');
+                }
+
+                // Fetch datasets based on updated tag selection
+                fetchDatasets();
+            }
+        });
+
+        // Fetch all datasets initially
+        fetchDatasets();
+    });
+</script>
+
+
+{% endblock %}
+
+{% set body_class = 'datasets-page' %}

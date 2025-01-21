@@ -1,0 +1,60 @@
+<!-- your_project/templates/layout.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <!-- <link rel="stylesheet " href="{{ url_for('static', filename='css/bootstrap.min.css') }}"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="{{ body_class|default('') }}">
+    <header id="movable-header">
+        <nav>
+            <span class="brand">Prod Data Management</span>
+            <a href="{{ url_for('main.home') }}">Home</a>
+            <a href="{{ url_for('main.vendors') }}">Vendors</a>
+            <a href="{{ url_for('main.datasets') }}">Datasets</a>
+            <a href="{{ url_for('main.budgets') }}">Budgets</a>
+            <a href="{{ url_for('main.admins') }}">Admins</a>
+        </nav>
+    </header>
+    <!-- Bootstrap JavaScript -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <script src="{{ url_for('static', filename='js/header.js') }}"></script>
+
+    
+</body>
+
+<script>
+    // Function to show the popup
+    function showPopup(message) {
+        var popup = document.getElementById("popup");
+        var popupMessage = document.getElementById("popup-message");
+        popupMessage.textContent = message;
+        popup.style.display = "block";
+
+        // Hide the popup after 2 seconds
+        setTimeout(function() {
+            popup.style.display = "none";
+        }, 2000);
+    }
+
+    // Check if there's a message to display
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        showPopup('{{ messages[0] }}');  // Show the first message
+    {% endif %}
+    {% endwith %}
+
+    // Function to confirm deletion
+    function confirmDelete() {
+        return confirm("Can you confirm deletion?"); // Show confirmation dialog
+    }
+
+</script>
+
+</html>

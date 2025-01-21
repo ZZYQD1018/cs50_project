@@ -1,0 +1,335 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>{{ vendor.name }}</h1>
+
+<!-- Split Section -->
+<section class="split-section">
+    <div class="left-section">
+        <h2>Datasets</h2>
+
+        <form action="{{ url_for('main.add_dataset', vendor_id=vendor.id) }}" method="POST">
+            <input type="text" name="dataset_name" placeholder="Dataset Name" required>
+            <button type="submit">Add Dataset</button>
+        </form>
+
+        <table id="vendorTable">
+            <thead>
+                <tr>
+                    <th>Dataset Name</th>
+                    <th>Dataset ID</th>
+                    <th>Dataset Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dataset in datasets %}
+                <tr>
+                    <td><a href="{{ url_for('main.dataset', dataset_id=dataset.id, active_tab = 'dataset-intro') }}">{{ dataset.name }}</a></td>
+                    <td>{{ dataset.id }}</td>
+                    <td>
+                        <!-- Status buttons -->
+                        <button
+                            class="status-btn"
+                            onclick="setStatus('{{ dataset.id }}', 'licensed')"
+                            style="background-color: {% if dataset.dataset_status == 'licensed' %}green{% else %}lightgray{% endif %};"
+                        >
+                            Licensed
+                        </button>
+                        <button
+                            class="status-btn"
+                            onclick="setStatus('{{ dataset.id }}', 'inactive')"
+                            style="background-color: {% if dataset.dataset_status == 'inactive' %}red{% else %}lightgray{% endif %};"
+                        >
+                            Inactive
+                        </button>
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('main.delete_dataset', dataset_id=dataset.id) }}" onsubmit="return confirmDelete();">
+                            <button type="submit">Delete</button>
+                        </form>
+        
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <br>
+
+    
+        <!-- Popup Notification -->
+        <div id="popup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background-color: #4CAF50; color: white; padding: 15px; z-index: 1000; border-radius: 5px; text-align: center;">
+            <span id="popup-message"></span>
+        </div>
+
+    </div>
+    <div class="right-section">
+        <h2>Contacts</h2>
+        <!-- Add New Vendor Button -->
+        <button id="addVendorBtn">Add New Contact</button>
+        <br>
+        <h3>Account Manager</h3>
+        <table id="vendorTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in acm_contacts %}
+                <tr>
+                    <td>
+                        <a href="#" class="contact-link" data-id="{{ contact.id }}">{{ contact.name }}</a>
+                    </td>
+                    <td>
+                        {{contact.comments}}
+                    </td>
+                    <td>
+                        <button class="btn btn-danger btn-sm delete-contact" data-id="{{ contact.id }}">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <br>
+        <h3>Sales</h3>
+        <table id="vendorTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in sales_contacts %}
+                <tr>
+                    <td>
+                        <a href="#" class="contact-link" data-id="{{ contact.id }}">{{ contact.name }}</a>
+                    </td>
+                    <td>
+                        {{contact.comments}}
+                    </td>
+                    <td>
+                        <button class="btn btn-danger btn-sm delete-contact" data-id="{{ contact.id }}">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <br>
+        <h3>Support</h3>
+        <table id="vendorTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in support_contacts %}
+                <tr>
+                    <td>
+                        <a href="#" class="contact-link" data-id="{{ contact.id }}">{{ contact.name }}</a>
+                    </td>
+                    <td>
+                        {{contact.comments}}
+                    </td>
+                    <td>
+                        <button class="btn btn-danger btn-sm delete-contact" data-id="{{ contact.id }}">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br>
+    </div>
+</section>
+
+<!-- Contact Details Modal -->
+<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="contactForm" method="GET">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="contactModalLabel">Contact Details</h4>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Name:</strong> <span id="contact-name"></span></p>
+                    <p><strong>Email:</strong> <span id="contact-email"></span></p>
+                    <p><strong>Phone:</strong> <span id="contact-phone"></span></p>
+                </div>
+                <button type="button" id="btn-close" class="btn-close" data-bs-dismiss="modal" aria-label="Close">Close Tab</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Structure -->
+<div id="vendorModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add New Vendor Info</h2>
+        <form method="post" action="{{ url_for('main.add_vendor_contact', vendor_id=vendor.id) }}" method="POST"> 
+            <div class="form-group">
+                <label for="position">Position</label>
+                <select id="position" name="position" required>
+                    <option value="Account Manager">Account Manager</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Support">Support</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="tel">Telephone</label>
+                <input type="tel" id="tel" name="tel" required>
+            </div>
+            <div class="form-group">
+                <label for="comments">Comments</label>
+                <textarea id="comments" name="comments"></textarea>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Function to confirm deletion
+    function confirmDelete() {
+        return confirm("Can you confirm deletion?"); // Show confirmation dialog
+    }
+    function setStatus(datasetId, status) {
+        fetch(`/set_status/${datasetId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: status })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Optionally refresh or update the UI to reflect the change
+                location.reload();
+            } else {
+                alert("Failed to update status");
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+
+    const btn = document.getElementById("addVendorBtn");
+    const modal = document.getElementById("vendorModal");
+    const span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function () {
+        modal.style.display = "block";
+    };
+
+    span.onclick = function () {
+        modal.style.display = "none";
+    };
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
+
+    const closeContact = document.getElementById("btn-close")
+
+    closeContact.onclick = function () {
+        contactModal.style.display = "none";
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Attach event listeners to all contact links
+        document.querySelectorAll('.contact-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent default link behavior
+                const contactId = this.dataset.id; // Get the contact ID from the data attribute
+               
+                // Fetch contact details from the server
+                fetch(`/vendor/contact/${contactId}`)
+                    .then(response => {
+                        console.log("helo within then")
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                            
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Populate the modal with contact details
+                        document.getElementById('contact-name').textContent = data.name;
+                        document.getElementById('contact-email').textContent = data.email;
+                        document.getElementById('contact-phone').textContent = data.tel;
+                        
+                        // Show the modal (Bootstrap modal initialization)
+                        const contactModal = new bootstrap.Modal(document.getElementById('contactModal'));
+                        contactModal.show();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching contact details:', error);
+                        alert('Failed to fetch contact details.');
+                    });
+                    console.log("hello after fetch")
+            });
+        });
+
+        // Attach event listeners to delete buttons
+        document.querySelectorAll('.delete-contact').forEach(button => {
+            button.addEventListener('click', function () {
+                const contactId = this.dataset.id; // Get the contact ID
+
+                if (confirm('Are you sure you want to delete this contact?')) {
+                    // Make a DELETE request to the server
+                    fetch(`/vendor/delete_contact/${contactId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            alert('Contact deleted successfully!');
+                            location.reload(); // Reload the page to reflect the changes
+                        } else {
+                            alert('Failed to delete contact.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting contact:', error);
+                        alert('Failed to delete contact.');
+                    });
+                }
+            });
+        });
+    });
+
+</script>
+
+
+{% endblock %}
+
+{% set body_class = 'vendor-page' %}

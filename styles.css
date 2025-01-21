@@ -1,0 +1,938 @@
+/* your_project/static/styles.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* Hover area at the top */
+#hover-area {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 30px; /* Adjust height as necessary */
+    z-index: 999; /* Ensure it's above other content */
+    cursor: pointer;
+    background-color: transparent; /* Ensure it's invisible but functional */
+}
+
+/* Movable Header */
+#movable-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color:#1D2D71;
+    display: flex;
+    justify-content: flex-start; /* Align links to the left */
+    align-items: center;
+    padding: 20px 0;
+    box-shadow: 0px 2px 5px rgba(218, 170, 170, 0.2);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+/* Hide the header initially */
+#movable-header.hidden {
+    transform: translateY(-100%);
+}
+
+/* Navigation styling */
+#movable-header nav {
+    display: flex;
+    gap: 15px; /* Reduce space between links */
+}
+
+/* Links inside the nav */
+#movable-header nav a {
+    color:  #FFD700;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 11px;
+}
+
+/* Add hover effect for links */
+#movable-header nav a:hover {
+    text-decoration: underline;
+}
+
+
+/* Brand styling */
+#movable-header .brand {
+    margin-left: 15px; 
+    margin-right: 15px; /* Add space between the brand and links */
+    font-weight: bold;
+    font-size: 30px;
+    color: #FFA500;
+    padding: 5px;
+}
+
+nav a {
+    color: white;
+    margin: 0 1rem;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: #ddd;
+}
+
+main {
+    margin-top: 80px;
+    padding: 2rem;
+}
+
+
+
+
+
+
+
+/* Apply background image only on pages with the 'home-page' class */
+.home-page {
+    background-image: url('/static/images/vvg_cafe_terrace.jpg');
+    background-size: cover;
+    background-position: center top;
+    background-attachment: fixed;
+    height: 100vh; /* Ensure it covers the whole viewport height */
+    margin: 0; /* Removes any default margin */
+    color: #fff; /* Text color for contrast */
+}
+
+/* Optional: Add padding to the content section to ensure content is below the header */
+.home-page .content {
+    padding-top: 150px; /* Adjust padding to make content start below header */
+}
+
+
+/* Dataset Table styles */
+.home-page #datasetTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    color: #150b0b; 
+    background-color: white; 
+}
+
+.home-page h1 {
+    font-size: 50px; /* Adjust this value as needed */
+    font-weight: bold;
+    color: white; /* Text color */
+  }
+
+.home-page .right-align {
+    text-align: right;  /* Aligns the text to the right */
+  }
+
+
+
+
+
+
+
+
+/* Apply background image only on pages with the 'home-page' class */
+.vendors-page {
+    background-image: url('/static/images/vvg_olives.jpg');
+    background-size: cover;
+    background-position: center top;
+    background-attachment: fixed;
+    height: 100vh; /* Ensure it covers the whole viewport height */
+    margin: 0; /* Removes any default margin */
+    color: #dfd1b8; /* Text color for contrast */
+}
+
+/* Optional: Add padding to the content section to ensure content is below the header */
+.vendors-page .content {
+    padding-top: 150px; /* Adjust padding to make content start below header */
+}
+
+
+/* Dataset Table styles */
+.vendors-page #vendorTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    color: #150b0b; 
+    background-color: #ddd; /* Light grey */
+}
+
+.vendors-page #vendorTable th {
+    color: 150b0b;
+    padding: 10px;
+    text-align: left;
+}
+
+  /* Style table cells */
+.vendors-page #vendorTable  td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.vendors-page h1 {
+    font-size: 80px; /* Adjust this value as needed */
+    font-weight: bold;
+    color: white; /* Text color */
+    text-shadow:
+    2px 2px 0px #000, /* Top-right shadow */
+    -2px -2px 0px #000, /* Bottom-left shadow */
+    2px -2px 0px #000, /* Top-left shadow */
+    -2px 2px 0px #000; /* Bottom-right shadow */
+  }
+
+
+
+
+
+
+
+
+
+/* Apply background image only on pages with the 'home-page' class */
+.vendor-page {
+    background-image: url('/static/images/vvg_mountain.jpeg');
+    background-size: cover;
+    background-position: center top;
+    background-attachment: fixed;
+    height: 100vh; /* Ensure it covers the whole viewport height */
+    margin: 0; /* Removes any default margin */
+    color: #1D2D71; /* Text color for contrast */
+}
+
+.vendor-page h1 {
+    font-size: 80px; /* Adjust this value as needed */
+    font-weight: bold;
+    color: white; /* Text color */
+    text-shadow:
+    2px 2px 0px #000, /* Top-right shadow */
+    -2px -2px 0px #000, /* Bottom-left shadow */
+    2px -2px 0px #000, /* Top-left shadow */
+    -2px 2px 0px #000; /* Bottom-right shadow */
+  }
+
+
+/* Dataset Table styles */
+.vendor-page #vendorTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    color: #150b0b; 
+    background-color: #ddd; /* Light grey */
+}
+
+.vendor-page #vendorTable th {
+    color: 150b0b;
+    padding: 10px;
+    text-align: left;
+}
+
+  /* Style table cells */
+.vendor-page #vendorTable  td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.vendor-page h2 {
+    font-size: 30px; /* Adjust this value as needed */
+    font-weight: bold;
+    color: #1D2D71; /* Text color */
+}
+
+.vendor-page h3 {
+    font-size: 20px; /* Adjust this value as needed */
+    font-weight: bold;
+    color: #1D2D71; /* Text color */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Apply background image only on pages with the 'home-page' class */
+.dataset-page {
+    background-image: url('/static/images/vvg_orchid.jpg');
+    background-size: cover;
+    background-position: center top;
+    background-attachment: fixed;
+    height: 100vh; /* Ensure it covers the whole viewport height */
+    margin: 0; /* Removes any default margin */
+    color: #1D2D71; /* Text color for contrast */
+}
+
+.dataset-page h1 {
+    font-size: 80px; /* Adjust this value as needed */
+    font-weight: bold;
+    color: white; /* Text color */
+    text-shadow:
+    2px 2px 0px #000, /* Top-right shadow */
+    -2px -2px 0px #000, /* Bottom-left shadow */
+    2px -2px 0px #000, /* Top-left shadow */
+    -2px 2px 0px #000; /* Bottom-right shadow */
+  }
+
+.dataset-page h3 {
+    font-size: 20px; /* Adjust this value as needed */
+    font-weight: bold;
+    color: white; /* Text color */
+  }
+
+
+.dataset-page  .tab-bar {
+    display: flex;
+    width: 98%; /* Adjust the width as needed */
+    border: 1px solid #ccc;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.dataset-page .tab {
+    flex: 1;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    border-right: 1px solid #ccc;
+    font-weight: bold;
+}
+
+.dataset-page .tab.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.dataset-page .tab:hover {
+    background-color: #ddd;
+}
+
+.dataset-page  .tab:last-child {
+    border-right: none;
+}
+
+
+.dataset-page .tab-content.active {
+    display: block;
+    width: 95%;
+    background-color: #f4f4f4;
+    height: 1000px;
+
+}
+
+.dataset-page .tab-content {
+    display: none;
+    padding: 20px;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+}
+
+.dataset-page .dataset-intro {
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    height: 100vh; /* Full viewport height */
+    margin: 0;
+}
+
+.dataset-page .top-section, .bottom-section {
+    flex: 1; /* Each section takes equal height */
+    padding: 20px; /* Add spacing inside the sections */
+    box-sizing: border-box; /* Include padding in element's dimensions */
+    display: flex; /* Use flexbox for content alignment */
+    flex-direction: column; /* Stack items in a column */
+    justify-content: flex-start; /* Align content to the top */
+    align-items: flex-start; /* Align content to the left */
+    overflow-y: auto; /* Handle overflow if content exceeds height */
+}
+
+/* Optional: Add background colors for clarity */
+.dataset-page .top-section {
+    background-color: #f8f9fa;
+}
+
+.dataset-page .bottom-section {
+    background-color: #e9ecef;
+}
+
+.dataset-page #content {
+    border: 1px solid #ccc; /* Optional: Border around the editable area */
+    background-color: #fff; /* Optional: Background color for editable area */
+    width: 100%; /* Make it span the full width of the container */
+    box-sizing: border-box; /* Ensure padding doesn’t affect width */
+    height: 200px; /* Set a fixed height */
+}
+
+.dataset-page .title-buttons-wrapper {
+    display: flex;
+    align-items: center; /* Vertically align items in the center */
+    gap: 10px; /* Add spacing between the title and buttons */
+}
+
+.dataset-page .tag-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px;
+}
+
+.dataset-page .button-container {
+    margin: 20px;
+}
+
+.dataset-page .tag {
+    padding: 10px 15px;
+    background-color: #f0f0f0;
+    border-radius: 15px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+}
+.dataset-page .tag.selected {
+    background-color: #007bff;
+    color: #fff;
+}
+.dataset-page .tag .close {
+    display: none;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ff4d4d;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    color: #fff;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.dataset-page .tag.selected .close {
+    display: flex;
+}
+
+.dataset-page #tagSelectionModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* Apply background image only on pages with the 'home-page' class */
+.admins-page {
+    background-image: url('/static/images/vvg_wheat_field.jpg');
+    background-size: cover;
+    background-position: center top;
+    background-attachment: fixed;
+    height: 100vh; /* Ensure it covers the whole viewport height */
+    margin: 0; /* Removes any default margin */
+    color: #fff; /* Text color for contrast */
+}
+
+/* Optional: Add padding to the content section to ensure content is below the header */
+.admins-page .content {
+    padding-top: 150px; /* Adjust padding to make content start below header */
+}
+
+
+/* Dataset Table styles */
+.admins-page #datasetTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    color: #150b0b; 
+    background-color: white; 
+}
+
+.admins-page h1 {
+    font-size: 80px;
+    font-weight: bold;
+    color: white; /* Text color */
+    text-shadow:
+    2px 2px 0px #000, /* Top-right shadow */
+    -2px -2px 0px #000, /* Bottom-left shadow */
+    2px -2px 0px #000, /* Top-left shadow */
+    -2px 2px 0px #000; /* Bottom-right shadow */
+  }
+
+.admins-page .right-align {
+    text-align: right;  /* Aligns the text to the right */
+  }
+
+.admins-page .modal {
+    color: #1D2D71; 
+}
+
+
+
+/* Apply background image only on pages with the 'home-page' class */
+.budgets-page {
+    background-image: url('/static/images/vvg_landscape.jpg');
+    background-size: cover;
+    background-position: center top;
+    background-attachment: fixed;
+    height: 100vh; /* Ensure it covers the whole viewport height */
+    margin: 0; /* Removes any default margin */
+    color: #fff; /* Text color for contrast */
+}
+
+/* Optional: Add padding to the content section to ensure content is below the header */
+.budgets-page .content {
+    padding-top: 150px; /* Adjust padding to make content start below header */
+}
+
+
+/* Dataset Table styles */
+.budgets-page #vendorTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    color: #150b0b; 
+    background-color: white; 
+}
+
+.budgets-page h1 {
+    font-size: 80px;
+    font-weight: bold;
+    color: white; /* Text color */
+    text-shadow:
+    2px 2px 0px #000, /* Top-right shadow */
+    -2px -2px 0px #000, /* Bottom-left shadow */
+    2px -2px 0px #000, /* Top-left shadow */
+    -2px 2px 0px #000; /* Bottom-right shadow */
+  }
+
+.budgets-page .right-align {
+    text-align: right;  /* Aligns the text to the right */
+  }
+
+.budgets-page .modal {
+    color: #1D2D71; 
+}
+
+
+
+/* Apply background image only on pages with the 'home-page' class */
+.budget-page {
+    background-image: url('/static/images/vvg_landscape.jpg');
+    background-size: cover;
+    background-position: center top;
+    background-attachment: fixed;
+    height: 100vh; /* Ensure it covers the whole viewport height */
+    margin: 0; /* Removes any default margin */
+    color: #fff; /* Text color for contrast */
+}
+
+/* Optional: Add padding to the content section to ensure content is below the header */
+.budget-page .content {
+    padding-top: 150px; /* Adjust padding to make content start below header */
+}
+
+
+/* Dataset Table styles */
+.budget-page #vendorTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    color: #150b0b; 
+    background-color: white; 
+}
+
+.budget-page h1 {
+    font-size: 80px;
+    font-weight: bold;
+    color: white; /* Text color */
+    text-shadow:
+    2px 2px 0px #000, /* Top-right shadow */
+    -2px -2px 0px #000, /* Bottom-left shadow */
+    2px -2px 0px #000, /* Top-left shadow */
+    -2px 2px 0px #000; /* Bottom-right shadow */
+  }
+
+.budget-page .right-align {
+    text-align: right;  /* Aligns the text to the right */
+  }
+
+.budget-page .modal {
+    color: #1D2D71; 
+}
+
+
+
+/* Apply background image only on pages with the 'home-page' class */
+.budgets-analysis-page {
+    background-image: url('/static/images/vvg_landscape.jpg');
+    background-size: cover;
+    background-position: center top;
+    background-attachment: fixed;
+    height: 100vh; /* Ensure it covers the whole viewport height */
+    margin: 0; /* Removes any default margin */
+    color: #fff; /* Text color for contrast */
+}
+
+/* Optional: Add padding to the content section to ensure content is below the header */
+.budgets-analysis-page .content {
+    padding-top: 150px; /* Adjust padding to make content start below header */
+}
+
+
+/* Dataset Table styles */
+.budgets-analysis-page #vendorTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    color: #150b0b; 
+    background-color: white; 
+}
+
+.budgets-analysis-page h1 {
+    font-size: 80px;
+    font-weight: bold;
+    color: white; /* Text color */
+    text-shadow:
+    2px 2px 0px #000, /* Top-right shadow */
+    -2px -2px 0px #000, /* Bottom-left shadow */
+    2px -2px 0px #000, /* Top-left shadow */
+    -2px 2px 0px #000; /* Bottom-right shadow */
+  }
+
+.budgets-analysis-page .right-align {
+    text-align: right;  /* Aligns the text to the right */
+  }
+
+.budgets-analysis-page .modal {
+    color: #1D2D71; 
+}
+
+
+/* Styles for the Add button */
+#addButton {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+#addButton:hover {
+    background-color: #45a049;
+}
+
+/* Table styles */
+#vendorTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#vendorTable th, #vendorTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#vendorTable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+
+
+/* Vendor.html */
+/* Split Section Styling */
+.split-section {
+    display: flex;
+    gap: 20px; /* Space between sections */
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f9f9f9; /* Optional background */
+    height: 800px; /* Set a fixed height for the split-section */
+}
+
+/* Left Section */
+.left-section {
+    flex: 2; /* Takes 2/3 of the width */
+    padding: 10px;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    height: 100%; /* Ensures it takes full height of the parent container */
+    overflow-y: auto; /* Enables vertical scrolling if content overflows */
+}
+
+/* Right Section */
+.right-section {
+    flex: 1; /* Takes 1/3 of the width */
+    padding: 10px;
+    background-color: #e9ecef;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    height: 100%; /* Ensures it takes full height of the parent container */
+    overflow-y: auto; /* Enables vertical scrolling if content overflows */
+}
+
+
+/* Form Styling */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Dataset Table styles */
+#datasetTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#datasetTable th, #datasetTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#datasetTable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+/* Dataset Table styles */
+#vendorAcctManager {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#vendorAcctManager th, #vendorAcctManager td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#vendorAcctManager th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+/* Dataset Table styles */
+#vendorSupport {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#vendorSupport th, #vendorSupport td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#vendorSupport th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+/* Dataset Table styles */
+#vendorSales {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#vendorSales th, #vendorSales td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#vendorSales th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+/* Modal Styling */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scrolling if needed */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%; /* Adjust as needed */
+    border-radius: 5px;
+}
+
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+
+.datasets-page {
+    background-image: url('/static/images/vvg_landscape.jpg');
+    background-size: cover;
+    background-position: center top;
+    background-attachment: fixed;
+    height: 100vh; /* Ensure it covers the whole viewport height */
+    margin: 0; /* Removes any default margin */
+}
+
+/* Optional: Add padding to the content section to ensure content is below the header */
+.datasets-page .content {
+    padding-top: 150px; /* Adjust padding to make content start below header */
+}
+
+
+.datasets-page h1 {
+    font-size: 80px;
+    font-weight: bold;
+    color: white; /* Text color */
+    text-shadow:
+    2px 2px 0px #000, /* Top-right shadow */
+    -2px -2px 0px #000, /* Bottom-left shadow */
+    2px -2px 0px #000, /* Top-left shadow */
+    -2px 2px 0px #000; /* Bottom-right shadow */
+  }
+
+.datasets-page .right-align {
+    text-align: right;  /* Aligns the text to the right */
+  }
+
+.datasets-page .modal {
+    color: #1D2D71; 
+}
+
+.datasets-page .container {
+    display: flex;
+    height: 100vh;
+}
+
+.datasets-page .left {
+    flex: 1;
+    max-width: 33.33%;
+    background: #f4f4f4;
+    padding: 20px;
+    border-right: 1px solid #ccc;
+}
+
+.datasets-page .right {
+    flex: 2;
+    padding: 20px;
+    background: #e9ecef;
+}
+
+
+
+.datasets-page li {
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.datasets-page li:hover {
+    text-decoration: underline;
+}
+
+.datasets-page .tag-item {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    display: inline-block;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.datasets-page .tag-item.selected {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #0056b3;
+}
+
+.datasets-page #dataset-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    color: #150b0b; 
+    background-color: white; 
+    border: 2px solid #ddd;
+}
+
+/* Add borders to each cell and center text */
+.datasets-page #dataset-table th, #dataset-table td {
+    border: 1px solid #ddd; /* Cell borders */
+    padding: 8px; /* Space inside the cells */
+    text-align: center; /* Center-align text */
+    vertical-align: middle; /* Center-align text vertically */
+}
+
+/* Style the table header */
+.datasets-page #dataset-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    text-align: center; /* Center-align header text */
+}
+
+/* Zebra striping for rows */
+.datasets-page #dataset-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Hover effect for rows */
+.datasets-page #dataset-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Style the links */
+.datasets-page .dataset-link {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.datasets-page .dataset-link:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
